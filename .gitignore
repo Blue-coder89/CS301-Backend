@@ -4,5 +4,3 @@ QueryRunner.class
 client.class
 .vscode
 database.properties
-InputFiles/*
-OutputFiles/*
