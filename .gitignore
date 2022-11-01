@@ -1,0 +1,5 @@
+*.class
+.vscode
+database.properties
+InputFiles/*
+OutputFiles/*
