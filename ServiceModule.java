@@ -60,21 +60,21 @@ class QueryRunner implements Runnable
     }
 
     public static StringTokenizer bookTickets(Connection connection,
-                                              int numPassengers,
-                                              String choice,
-                                              int train_no,
-                                              String date,
-                                              String firstTry,
-                                              String commaSepNames)
+        int numPassengers,
+        String choice,
+        int train_no,
+        String date,
+        String firstTry,
+        String commaSepNames)
     {
-        StringTokenizer resultTokens = new StringTokenizer("-4");
+        StringTokenizer resultTokens = new StringTokenizer("");
         String sql = String.format("SELECT book_tickets(%d , '%s' , %d , '%s' , '%s' ,%s );",
-                    numPassengers,
-                    choice,
-                    train_no,
-                    date,
-                    firstTry,
-                    commaSepNames);
+            numPassengers,
+            choice,
+            train_no,
+            date,
+            firstTry,
+            commaSepNames);
         try
         {
             Statement statement = connection.createStatement();
@@ -104,7 +104,6 @@ class QueryRunner implements Runnable
             PrintWriter printWriter = new PrintWriter(bufferedOutput, true) ;
             
             String clientCommand = "" ;
-            String responseQuery = "" ;
             String queryInput = "" ;
             Connection connection  = openConnection();
             while(true)
@@ -125,6 +124,7 @@ class QueryRunner implements Runnable
                     String returnMsg = "Connection Terminated - client : " 
                                         + socketConnection.getRemoteSocketAddress().toString();
                     System.out.println(returnMsg);
+                    printWriter.println("ALL REQUESTS PROCESSED FOR THE USER"); 
                     inputStream.close();
                     bufferedInput.close();
                     outputStream.close();
@@ -152,19 +152,21 @@ class QueryRunner implements Runnable
                     StringTokenizer resultTokens = bookTickets(connection, numPassengers, choice, train_no, date, firstTry, commaSepNames);
 
                     String exitCode = resultTokens.nextToken();
-                    if (exitCode=="-3")
+                    if (exitCode.equals("-3"))
                     {
+                        
                         firstTry = "false";
                         resultTokens = bookTickets(connection, numPassengers, choice, train_no, date, firstTry, commaSepNames);  
+                        exitCode = resultTokens.nextToken();
                     }
 
                     
                     switch (exitCode) {
                         case "-1":
-                            printWriter.println("Booking Failed: Train not yet released into the booking system for the mentioned date or train number is invalid");
+                            printWriter.println("Booking Failed: Train not yet released into the booking system for the mentioned date or train number is invalid\n");
                             break;
                         case "-2":
-                            printWriter.println("Booking Failed: Not enough Tickets");
+                            printWriter.println("Booking Failed: Not enough Tickets\n");
                             break;
                         case "0":
                             String PNR = resultTokens.nextToken();
@@ -183,7 +185,7 @@ class QueryRunner implements Runnable
                             printWriter.println("\n");
                             break;
                         default:
-                            printWriter.println("Some unknown error has occured. Please contact Admin");
+                            printWriter.println("Some unknown error has occured. Please contact Admin with Exit Code: "+firstTry+exitCode);
                     }
                     
                 //    throw new InterruptedException("Error in Queries");
@@ -198,7 +200,7 @@ class QueryRunner implements Runnable
                 // //----------------------------------------------------------------
                 
                 // //  Sending data back to the client
-                // printWriter.println(responseQuery); 
+                
                 // // System.out.println("\nSent results to client - " 
                 // //                     + socketConnection.getRemoteSocketAddress().toString() );
                 
