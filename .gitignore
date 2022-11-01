@@ -1,4 +1,7 @@
-*.class
+sendQuery.class
+serviceModule.class
+QueryRunner.class
+client.class
 .vscode
 database.properties
 InputFiles/*
