@@ -1,5 +1,5 @@
 sendQuery.class
-serviceModule.class
+ServiceModule.class
 QueryRunner.class
 client.class
 .vscode
