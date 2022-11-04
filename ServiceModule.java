@@ -81,12 +81,18 @@ class QueryRunner implements Runnable
             ResultSet r = statement.executeQuery(sql);
             r.next();
             resultTokens = new StringTokenizer(r.getString("book_tickets"),",{}");
+            if (resultTokens.hasMoreTokens()==false)
+            {
+                System.out.println(r.getString("book_tickets"));
+            }
+            //System.out.println(r.getString("book_tickets"));
             
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        
         return resultTokens;
     }
 
@@ -134,7 +140,7 @@ class QueryRunner implements Runnable
                     connection.close(); 
                     return;
                 }
-
+                String exitCode="old";
                 //-------------- your DB code goes here----------------------------
                 try
                 {
@@ -151,7 +157,7 @@ class QueryRunner implements Runnable
                     String commaSepNames = passengerNames.toString().replace("[", "'").replace("]", "'").replace(" ","'").replace(",","',");
                     StringTokenizer resultTokens = bookTickets(connection, numPassengers, choice, train_no, date, firstTry, commaSepNames);
 
-                    String exitCode = resultTokens.nextToken();
+                    exitCode = resultTokens.nextToken();
                     if (exitCode.equals("-3"))
                     {
                         
@@ -192,6 +198,7 @@ class QueryRunner implements Runnable
                 } 
                 catch (Exception e)
                 {
+                    System.out.println(clientCommand);
                     e.printStackTrace();
                 }
 
@@ -223,7 +230,7 @@ class QueryRunner implements Runnable
 public class ServiceModule 
 {
     static int serverPort = 7005;
-    static int numServerCores = 2 ;
+    static int numServerCores = 50 ;
     //------------ Main----------------------
     public static void main(String[] args) throws IOException 
     {    

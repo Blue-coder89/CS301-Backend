@@ -5,11 +5,13 @@ import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException  ;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.net.Socket;
 
 
@@ -41,17 +43,16 @@ class sendQuery implements Runnable
                                                                   .getInputStream());
             BufferedReader bufferedInput = new BufferedReader(inputStream);
             PrintWriter printWriter = new PrintWriter(bufferedOutput,true);
-            File queries = new File(inputfile); 
+            FileReader queries = new FileReader(inputfile); 
             File output = new File(outputfile); 
             FileWriter filewriter = new FileWriter(output);
-            Scanner sc = new Scanner(queries);
+            BufferedReader br = new BufferedReader(queries);
             String query = "";
             //--------------------------------------------------------------------
-
             // Read input queries
-            while(sc.hasNextLine())
+            while((query = br.readLine())!=null)
             {
-                query = sc.nextLine();
+                //System.out.println("Sent: "+query);
                 printWriter.println(query);
             }
 
@@ -65,7 +66,7 @@ class sendQuery implements Runnable
 
             // close the buffers and socket
             filewriter.close();
-            sc.close();
+            br.close();
             socketConnection.close();
         } 
         catch (IOException e1)

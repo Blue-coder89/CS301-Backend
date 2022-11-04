@@ -8,3 +8,6 @@
 - Type ``` psql railways ``` in terminal.
 - Put your database password on line 7 in ContactProgram.java.
 - Run the java code normally in another terminal.
+
+
+
