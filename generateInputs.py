@@ -17,8 +17,8 @@ def addInputFile(userNumber):
         for j in range(ticketsTotal):
             passengerNames.append("".join(random.choices(string.ascii_uppercase+string.ascii_lowercase,k=random.randint(1,16))))
         trainIndex=random.randint(0,NUM_TRAINS-1)
-        choice= random.choice(['A','S'])
-        fileName.write("{} {} {} {} {}\n".format(ticketsTotal," ".join(passengerNames),TRAIN_NUMS[trainIndex],DEP_DATES[trainIndex],choice))
+        choice= random.choice(['AC','SL'])
+        fileName.write("{} {} {} {} {}\n".format(ticketsTotal,", ".join(passengerNames),TRAIN_NUMS[trainIndex],DEP_DATES[trainIndex],choice))
     fileName.write("Finish")
 for userNumber in range(NUM_USERS):
     addInputFile(userNumber+1)
