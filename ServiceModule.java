@@ -18,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
 class QueryRunner implements Runnable
 {
     //  Declare socket for client access
@@ -61,7 +60,7 @@ class QueryRunner implements Runnable
 
     public static StringTokenizer bookTickets(Connection connection,
         int numPassengers,
-        String choice,
+        char choice,
         int train_no,
         String date,
         String firstTry,
@@ -148,21 +147,27 @@ class QueryRunner implements Runnable
                     ArrayList<String> passengerNames = new ArrayList<String>();
                     for (int i=0;i<numPassengers;i++)
                     {
-                        passengerNames.add(tokenizer.nextToken());
+                        String tmpName=tokenizer.nextToken();
+                        
+                        if (i!=(numPassengers-1))
+                        {
+                            tmpName=tmpName.substring(0,tmpName.length()-1);
+                        }
+                        passengerNames.add(tmpName);
                     }
                     int train_no = Integer.parseInt(tokenizer.nextToken()) ;
                     String date = tokenizer.nextToken();
                     String choice=tokenizer.nextToken();
                     String firstTry= "true";
                     String commaSepNames = passengerNames.toString().replace("[", "'").replace("]", "'").replace(" ","'").replace(",","',");
-                    StringTokenizer resultTokens = bookTickets(connection, numPassengers, choice, train_no, date, firstTry, commaSepNames);
+                    StringTokenizer resultTokens = bookTickets(connection, numPassengers, choice.charAt(0), train_no, date, firstTry, commaSepNames);
 
                     exitCode = resultTokens.nextToken();
                     if (exitCode.equals("-3"))
                     {
                         
                         firstTry = "false";
-                        resultTokens = bookTickets(connection, numPassengers, choice, train_no, date, firstTry, commaSepNames);  
+                        resultTokens = bookTickets(connection, numPassengers, choice.charAt(0), train_no, date, firstTry, commaSepNames);  
                         exitCode = resultTokens.nextToken();
                     }
 
