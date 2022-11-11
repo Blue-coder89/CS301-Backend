@@ -169,7 +169,7 @@ public class Interactor
             System.out.println("Adding Train Route Mode\n");
             int choice;
             System.out.println("1. Add a train route in interactive mode");
-            System.out.println("2. Add trains via file");
+            System.out.println("2. Add train routes via ./data/routes.txt file");
             choice = sc.nextInt();
             sc.nextLine();
             if (choice == 1) 
@@ -271,21 +271,61 @@ public class Interactor
     }
 
     public static void releaseIntoBooking() {
-        System.out.println("Choose one option\n");
-        System.out.println("1. Read through files");
-        System.out.println("2. Enter details manually");
-        System.out.println("Your Choice:");
-        int choice = sc.nextInt();
-        if (choice == 2) {
-            System.out.println("Enter train number");
-            System.out.println("Note: Train must be present in the trains relation");
-            int trainNum = sc.nextInt();
-            System.out.println("Enter date of departure from the source in YYYY-MM-DD format");
-            String depDate = sc.nextLine();
-            System.out.println("Enter total number of AC coaches on that day");
-            int acNum = sc.nextInt();
-            System.out.println("Enter total number of Sleeper coaches on that day");
-            int slNum = sc.nextInt();
+        try
+        {
+            System.out.println("Choose one option\n");
+            System.out.println("1. Enter details manually");
+            System.out.println("2. Read through the file ./data/Trainschedule.txt");
+            
+            System.out.println("Your Choice:");
+            int choice = sc.nextInt();
+            sc.nextLine();
+            if (choice == 1) 
+            {
+                System.out.println("Enter train number");
+                System.out.println("Note: Train must be present in the trains relation");
+                String trainNum = sc.nextLine();
+                System.out.println("Enter date of departure from the source in YYYY-MM-DD format");
+                String depDate = sc.nextLine();
+                System.out.println("Enter total number of AC coaches on that day");
+                int acNum = sc.nextInt();
+                sc.nextLine();
+                System.out.println("Enter total number of Sleeper coaches on that day");
+                int slNum = sc.nextInt();
+                sc.nextLine();
+                String sql = String.format("CALL release_into_booking(%s, '%s', %d, %d)",trainNum, depDate, acNum, slNum);
+                Statement statement = connection.createStatement();
+                statement.execute(sql);
+                System.out.println("Released for booking successfully!");
+            }
+            else
+            {
+                String filePath = "./data/Trainschedule.txt";
+                FileReader routesList = new FileReader(filePath);
+                BufferedReader br = new BufferedReader(routesList);
+                String newLine;
+                while(true)
+                {
+                    newLine=br.readLine();
+                    if (newLine.equals("#"))
+                    {
+                        break;
+                    }
+                    StringTokenizer runsTokens = new StringTokenizer(newLine);
+                    String trainNum =  runsTokens.nextToken();
+                    String depDate = runsTokens.nextToken();
+                    int acNum = Integer.parseInt(runsTokens.nextToken());
+                    int slNum = Integer.parseInt(runsTokens.nextToken());
+                    String sql = String.format("CALL release_into_booking(%s, '%s', %d, %d)",trainNum, depDate, acNum, slNum);
+                    Statement statement = connection.createStatement();
+                    statement.execute(sql);
+                }
+                System.out.println("All the trains released for booking successfully!");
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -309,6 +349,7 @@ public class Interactor
             System.out.println("7. QUIT \n");
             System.out.println("PLEASE ENTER YOUR CHOICE: ");
             choice = sc.nextInt();
+            sc.nextLine();
             switch (choice)
             {
                 case 1:
