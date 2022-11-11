@@ -124,7 +124,7 @@ class QueryRunner implements Runnable
                 queryInput = tokenizer.nextToken();
                 // System.out.println(queryInput);
                 // System.out.println("End");
-                if(queryInput.equals("Finish"))
+                if(queryInput.equals("#"))
                 {
                     String returnMsg = "Connection Terminated - client : " 
                                         + socketConnection.getRemoteSocketAddress().toString();
@@ -235,7 +235,7 @@ class QueryRunner implements Runnable
 public class ServiceModule 
 {
     static int serverPort = 7005;
-    static int numServerCores = 100 ;
+    static int numServerCores = 50 ;
     //------------ Main----------------------
     public static void main(String[] args) throws IOException 
     {    

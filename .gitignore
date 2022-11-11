@@ -5,3 +5,4 @@ client.class
 Interactor.class
 .vscode
 database.properties
+Interactor$station.class

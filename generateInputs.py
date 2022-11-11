@@ -19,6 +19,6 @@ def addInputFile(userNumber):
         trainIndex=random.randint(0,NUM_TRAINS-1)
         choice= random.choice(['AC','SL'])
         fileName.write("{} {} {} {} {}\n".format(ticketsTotal,", ".join(passengerNames),TRAIN_NUMS[trainIndex],DEP_DATES[trainIndex],choice))
-    fileName.write("Finish")
+    fileName.write("#")
 for userNumber in range(NUM_USERS):
     addInputFile(userNumber+1)

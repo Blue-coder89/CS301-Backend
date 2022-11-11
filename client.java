@@ -27,8 +27,8 @@ class sendQuery implements Runnable
         {
             //Creating a client socket to send query requests
             Socket socketConnection = new Socket("localhost", sockPort) ;
-            String inputFolderName="InputFiles/";
-            String outputFolderName = "OutputFiles/";
+            String inputFolderName="Input/";
+            String outputFolderName = "Output/";
             // Files for input queries and responses
             String inputfile = inputFolderName + Thread.currentThread().getName() + "_input.txt" ;
             String outputfile = outputFolderName + Thread.currentThread().getName() + "_output.txt" ;
@@ -78,7 +78,7 @@ public class client
 {
     public static void main(String args[])throws IOException
     {
-        File inputFolder = new File("./InputFiles");
+        File inputFolder = new File("./Input");
         int numberOfusers = inputFolder.list().length -1 ;   // Indicate no of users 
         // Creating a thread pool
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfusers) ;
