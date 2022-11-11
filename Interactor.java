@@ -206,54 +206,58 @@ public class Interactor
                     {
                         station a = path.get(i);
                         station b = path.get(j);
-                        String sql = String.format("INSERT INTO schedules VALUES('%s','%s',%d,%d,%d,'%s','%s')",
+                        String sql = String.format("INSERT INTO schedules VALUES('%s','%s',%s,%d,%d,'%s','%s')",
                                 a.stationCode, b.stationCode, trainNumber, a.departureDay, b.arrivalDay,
                                 a.departureTime, b.arrialTime);
                         Statement statement = connection.createStatement();
-                        ResultSet r = statement.executeQuery(sql);
-                        r.next();
+                        statement.execute(sql);
                     }
                 }
                 System.out.println("Route added successfully");
             } 
-            else {
-                String filePath = "";
-                InputStream is = new FileInputStream(filePath);
-                InputStreamReader inputStream = new InputStreamReader(is);
-                BufferedReader fileScan = new BufferedReader(inputStream);
-                while (true) {
-                    String query = fileScan.readLine();
-                    StringTokenizer tokenizer = new StringTokenizer(query);
-                    int trainNumber = Integer.parseInt(tokenizer.nextToken());
-                    int numberOfStations = Integer.parseInt(tokenizer.nextToken());
+            else 
+            {
+                String filePath = "./data/routes.txt";
+                FileReader routesList = new FileReader(filePath);
+                BufferedReader br = new BufferedReader(routesList);
+                String newLine;
+                while((newLine = br.readLine())!=null)
+                {
+                    String trainNumber;
+                    int numberOfStations;
                     ArrayList<station> path = new ArrayList<station>();
-                    for (int i = 0; i < numberOfStations; i++) {
-                        query = fileScan.readLine();
-                        tokenizer = new StringTokenizer(query);
+                    trainNumber = newLine;
+                    numberOfStations = Integer.parseInt(br.readLine());
+                    for (int i = 0; i < numberOfStations; i++) 
+                    {
                         station s = new station();
-                        s.stationCode = tokenizer.nextToken();
-                        s.arrivalDay = Integer.parseInt(tokenizer.nextToken());
-                        s.arrialTime = tokenizer.nextToken();
-                        s.departureDay = Integer.parseInt(tokenizer.nextToken());
-                        s.departureTime = tokenizer.nextToken();
+                        StringTokenizer routeTokens = new StringTokenizer(br.readLine());
+                        s.stationCode = routeTokens.nextToken();
+                        s.arrivalDay = Integer.parseInt(routeTokens.nextToken());
+                        s.arrialTime = routeTokens.nextToken();
+                        s.departureDay = Integer.parseInt(routeTokens.nextToken());
+                        s.departureTime = routeTokens.nextToken();
                         path.add(s);
                     }
-                    for (int i = 0; i < numberOfStations - 1; i++)
-                        for (int j = i + 1; j < numberOfStations; j++) {
+                    for (int i = 0; i < numberOfStations ; i++)
+                    {
+                        for (int j = i + 1; j < numberOfStations; j++) 
+                        {
                             station a = path.get(i);
                             station b = path.get(j);
-                            String sql = String.format("INSERT INTO schedules VALUES('%s','%s',%d,%d,%d,'%s','%s')",
+                            String sql = String.format("INSERT INTO schedules VALUES('%s','%s',%s,%d,%d,'%s','%s')",
                                     a.stationCode, b.stationCode, trainNumber, a.departureDay, b.arrivalDay,
                                     a.departureTime, b.arrialTime);
                             Statement statement = connection.createStatement();
                             statement.execute(sql);
                         }
-
+                    }
+                    System.out.println("Routes added successfully");
                 }
 
             }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
