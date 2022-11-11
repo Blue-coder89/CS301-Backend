@@ -4,10 +4,12 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -26,9 +28,10 @@ import java.time.LocalTime;
 public class Interactor {
 
     public static Scanner sc = new Scanner(System.in);
+    public static Connection connection = openConnection();
 
     public static class station {
-        String stationNumber;
+        String stationCode;
         int arrivalDay;
         String arrialTime;
         int departureDay;
@@ -99,62 +102,118 @@ public class Interactor {
         return resultTokens;
     }
 
-    public void addTrainInteractive() {
+    public static void addTrainRoutes() {
         try {
-            String trainName;
-            int trainNumber;
-            int numberOfStations;
-            ArrayList<station> path = new ArrayList<station>();
-            System.out.println("Please Enter Train Name\n");
-            trainName = sc.nextLine();
-            System.out.println("Please Enter Train Number\n");
-            trainNumber = sc.nextInt();
-            System.out.println("Please Enter Number of stations in its path\n");
-            numberOfStations = sc.nextInt();
-            System.out.println("Please Enter the path as seen by the stations\n");
-            for (int i = 0; i < numberOfStations; i++) {
-                System.out.println(
-                        "Please Enter the station number,arrial day,arrival time,departure day,departure time\n");
-                station s = new station();
-                s.stationNumber = sc.nextLine();
-                s.arrivalDay = sc.nextInt();
-                s.arrialTime = sc.nextLine();
-                s.departureDay = sc.nextInt();
-                s.departureTime = sc.nextLine();
-                path.add(s);
-            }
-            for (int i = 0; i < numberOfStations - 1; i++)
-                for (int j = i + 1; j < numberOfStations; j++) {
-                    station a = path.get(i);
-                    station b = path.get(j);
-                    String sql = String.format("INSERT INTO schedules VALUES('%s','%s',%d,%d,%d,'%s','%s')",
-                            a.stationNumber, b.stationNumber, trainNumber, a.departureDay, b.arrivalDay,
-                            a.departureTime, b.arrialTime);
-                    Statement statement = connection.createStatement();
-                    ResultSet r = statement.executeQuery(sql);
-                    r.next();
+            System.out.println("Adding Train Route Mode\n");
+            int choice;
+            System.out.println("Press 1 to add a train in interactive mode\n");
+            System.out.println("Press 2 to add trains via file\n");
+            choice = sc.nextInt();
+            if (choice == 1) {
+                int trainNumber;
+                int numberOfStations;
+                ArrayList<station> path = new ArrayList<station>();
+                System.out.println("Please Enter Train Number\n");
+                trainNumber = sc.nextInt();
+                System.out.println("Please Enter Number of stations in its path\n");
+                numberOfStations = sc.nextInt();
+                System.out.println("Please Enter the path as seen by the stations\n");
+                for (int i = 0; i < numberOfStations; i++) {
+                    System.out.println(
+                            "Please Enter the station number,arrial day,arrival time,departure day,departure time\n");
+                    station s = new station();
+                    s.stationCode = sc.nextLine();
+                    s.arrivalDay = sc.nextInt();
+                    s.arrialTime = sc.nextLine();
+                    s.departureDay = sc.nextInt();
+                    s.departureTime = sc.nextLine();
+                    path.add(s);
+                }
+                for (int i = 0; i < numberOfStations - 1; i++)
+                    for (int j = i + 1; j < numberOfStations; j++) {
+                        station a = path.get(i);
+                        station b = path.get(j);
+                        String sql = String.format("INSERT INTO schedules VALUES('%s','%s',%d,%d,%d,'%s','%s')",
+                                a.stationCode, b.stationCode, trainNumber, a.departureDay, b.arrivalDay,
+                                a.departureTime, b.arrialTime);
+                        Statement statement = connection.createStatement();
+                        ResultSet r = statement.executeQuery(sql);
+                        r.next();
+                    }
+            } 
+            else {
+                String filePath = "";
+                InputStream is = new FileInputStream(filePath);
+                Scanner fileScan = new Scanner(is, StandardCharsets.UTF_8.name());
+                while (fileScan.hasNextLine()) {
+                    String query = fileScan.nextLine();
+                    StringTokenizer tokenizer = new StringTokenizer(query);
+                    int trainNumber = Integer.parseInt(tokenizer.nextToken());
+                    int numberOfStations = Integer.parseInt(tokenizer.nextToken());
+                    ArrayList<station> path = new ArrayList<station>();
+                    for (int i = 0; i < numberOfStations; i++) {
+                        query = fileScan.nextLine();
+                        tokenizer = new StringTokenizer(query);
+                        station s = new station();
+                        s.stationCode = tokenizer.nextToken();
+                        s.arrivalDay = Integer.parseInt(tokenizer.nextToken());
+                        s.arrialTime = tokenizer.nextToken();
+                        s.departureDay = Integer.parseInt(tokenizer.nextToken());
+                        s.departureTime = tokenizer.nextToken();
+                        path.add(s);
+                    }
+                    for (int i = 0; i < numberOfStations - 1; i++)
+                        for (int j = i + 1; j < numberOfStations; j++) {
+                            station a = path.get(i);
+                            station b = path.get(j);
+                            String sql = String.format("INSERT INTO schedules VALUES('%s','%s',%d,%d,%d,'%s','%s')",
+                                    a.stationCode, b.stationCode, trainNumber, a.departureDay, b.arrivalDay,
+                                    a.departureTime, b.arrialTime);
+                            Statement statement = connection.createStatement();
+                            ResultSet r = statement.executeQuery(sql);
+                            r.next();
+                        }
+
                 }
 
+            }
         } catch (Exception e) {
             System.out.println(e);
         }
     }
 
-    public void addTrainByFile() {
-
-    }
-
-    public void addStationNames() {
+    public static void addStationNames() {
         try {
-            System.out.println("Please Enter Station Name and Station Code\n");
-            String stationName = sc.nextLine();
-            String stationCode = sc.nextLine();
-            String sql = String.format("INSERT INTO schedules VALUES('%s','%s')",stationName,stationCode
-                    );
-            Statement statement = connection.createStatement();
-            ResultSet r = statement.executeQuery(sql);
-            r.next();
-
+            System.out.println("Adding Station Name Mode\n");
+            int choice;
+            System.out.println("Press 1 to add a station in interactive mode\n");
+            System.out.println("Press 2 to add station via file\n");
+            choice = sc.nextInt();
+            if (choice == 1) {
+                System.out.println("Please Enter Station Name and Station Code\n");
+                String stationName = sc.nextLine();
+                String stationCode = sc.nextLine();
+                String sql = String.format("INSERT INTO schedules VALUES('%s','%s')", stationName, stationCode);
+                Statement statement = connection.createStatement();
+                ResultSet r = statement.executeQuery(sql);
+                r.next();
+            }
+            else
+                {
+                    String filePath = "";
+                InputStream is = new FileInputStream(filePath);
+                Scanner fileScan = new Scanner(is, StandardCharsets.UTF_8.name());
+                while (fileScan.hasNextLine()) {
+                    String query = fileScan.nextLine();
+                    StringTokenizer tokenizer = new StringTokenizer(query);
+                    String stationName = tokenizer.nextToken();
+                    String stationCode = tokenizer.nextToken();
+                    String sql = String.format("INSERT INTO schedules VALUES('%s','%s')", stationName, stationCode);
+                    Statement statement = connection.createStatement();
+                    ResultSet r = statement.executeQuery(sql);
+                    r.next();
+                }
+                }
         } catch (Exception E) {
             System.out.println(E);
         }
@@ -255,16 +314,12 @@ public class Interactor {
         }
     }
 
-    public static Connection connection = openConnection();
-       
-
-    void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         System.out.println("Choose one option");
         while (true) {
             int choice;
-            System.out.println("1. ADD a new Train Route in Interactive mode\n");
-            System.out.println("2. ADD new Train Route by file\n");
-            System.out.println("3. ADD new Station Names\n");
+            System.out.println("1. ADD a new Train Route\n");
+            System.out.println("2. ADD new Station Names\n");
             System.out.println("4. SEARCH TRAINS BETWEEN STATIONS\n");
             System.out.println("5. RELEASE TRAINS FOR BOOKING");
             System.out.println("6. BOOK JOURNEY TICEKTS");
@@ -272,7 +327,9 @@ public class Interactor {
             System.out.println("PLEASE ENTER YOUR CHOICE: \n");
             choice = sc.nextInt();
             if (choice == 1) {
+                addTrainRoutes();
             } else if (choice == 2) {
+                addStationNames();
             } else
                 break;
 
