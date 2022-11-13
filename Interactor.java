@@ -32,6 +32,43 @@ public class Interactor
         String departureTime;
     };
 
+    public static StringTokenizer bookTickets(
+        int numPassengers,
+        char choice,
+        int train_no,
+        String date,
+        String firstTry,
+        String commaSepNames)
+    {
+        StringTokenizer resultTokens = new StringTokenizer("");
+        String sql = String.format("SELECT book_tickets(%d , '%s' , %d , '%s' , '%s' ,%s );",
+            numPassengers,
+            choice,
+            train_no,
+            date,
+            firstTry,
+            commaSepNames);
+        try
+        {
+            Statement statement = connection.createStatement();
+            System.out.println(sql);
+            ResultSet r = statement.executeQuery(sql);
+            r.next();
+            resultTokens = new StringTokenizer(r.getString("book_tickets"),",{}");
+            if (resultTokens.hasMoreTokens()==false)
+            {
+                System.out.println(r.getString("book_tickets"));
+            }
+            //System.out.println(r.getString("book_tickets"));
+            
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+        return resultTokens;
+    }
     public static Connection openConnection() 
     {
 
@@ -329,9 +366,61 @@ public class Interactor
         }
     }
 
-    public static void bookTickets() 
+    public static void bookTicketsInteractive() 
     {
+        try{
+        System.out.println("Please Enter Number of passengers");
+        int numPassengers = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Please Enter Your Choice(A/S)");
+        String choice = sc.nextLine();
+        System.out.println("Please Enter the train number");
+        int train_no = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Please Enter the date");
+        String date = sc.nextLine();
+        String firstTry = "false";
+        ArrayList<String> passengerNames = new ArrayList<String>();
+        for(int i = 0;i<numPassengers;i++)
+            {
+                System.out.println(String.format("Please Enter the name of %d numbered passeneger",i+1));
+                String name = sc.nextLine();
+                passengerNames.add(name);
+            }
+        String commaSeperatedNames = passengerNames.toString().replace("[", "'").replace("]", "'").replace(" ","'").replace(",","',");
+        StringTokenizer resultTokens = bookTickets(numPassengers,choice.charAt(0), train_no, date, firstTry, commaSeperatedNames);
+        String exitCode = resultTokens.nextToken();
+        switch (exitCode) {
+            case "-1":
+                System.out.println("Booking Failed: Train not yet released into the booking system for the mentioned date or train number is invalid\n");
+                break;
+            case "-2":
+                System.out.println("Booking Failed: Not enough Tickets\n");
+                break;
+            case "0":
+                String PNR = resultTokens.nextToken();
+                System.out.println(String.format("Tickets Booked with PNR %s", PNR));
+                System.out.println(String.format("Train No: %05d    Departure Date: %s",train_no, date));
+                System.out.println("");
+                System.out.println("Passenger Name    Coach  Type  Berth Number");
+                for (int i=0;i<numPassengers;i++)
+                {
+                    String berth = resultTokens.nextToken();
+                    String coach = resultTokens.nextToken();
+                    String berthType =  resultTokens.nextToken();
 
+                    System.out.println(String.format("%-16s  %-5s  %-4s  %s",passengerNames.get(i),coach,berthType,berth));
+                }
+                System.out.println("\n");
+                break;
+            default:
+                System.out.println("Some unknown error has occured. Please contact Admin with Exit Code: "+firstTry+exitCode);
+        }
+        
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     
@@ -368,7 +457,7 @@ public class Interactor
                     releaseIntoBooking();
                     break;
                 case 6:
-                    bookTickets();
+                    bookTicketsInteractive();
                     break;
                 default:
                     break;
