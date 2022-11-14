@@ -301,11 +301,46 @@ public class Interactor
 
     public static void search() 
     {
-        System.out.println("Please Enter ta\rting point of Journey: ");
-        //String start = sc.next();
+        System.out.println("Please Enter starting point of Journey: ");
+        String start = sc.next();
         System.out.println("Please Enter end point of Journey: ");
-        //String destination = sc.next();
+        String destination = sc.next();
+        try
+        {
+            StringTokenizer resultTokens = new StringTokenizer("");
+            // checking direct paths
+            String sql = String.format(
+                "SELECT S.train_number,S.from_station,S.SDT,S.to_station,S.DAT FROM schedules as S WHERE S.from_station = '%s' and S.to_station = '%s' and S.source_day=1",start,destination
+            );
+            Statement statement = connection.createStatement();
+            System.out.println(sql);
+            ResultSet r = statement.executeQuery(sql);
+            r.next();
+            resultTokens = new StringTokenizer(r.getString("train_number"),",{}");
+            if (resultTokens.hasMoreTokens()==false)
+            {
+                System.out.println(r.getString("train_number"));
+            }
 
+
+            // checking single hop paths
+            sql = String.format(
+                "SELECT S1.train_number,S1.from_station,S1.SDT,S1.to_station,S1.DAT,S2.train_number,S2.from_station,S2.SDT,S2.to_station,S2.DAT FROM schedules as S1, schedules as S2 WHERE S1.train_number!=S2.train_number AND S1.from_station = '%s' AND S1.to_station = S2.from_station AND S2.to_station = '%s' AND S1.source_day = 1 AND (S2.SDT - S1.DAT <= '04:00:00') AND (S2.SDT-S1.DAT>='00:00:00');",start,destination
+            );
+            statement = connection.createStatement();
+            System.out.println(sql);
+            r = statement.executeQuery(sql);
+            r.next();
+            resultTokens = new StringTokenizer(r.getString("train_number"),",{}");
+            if (resultTokens.hasMoreTokens()==false)
+            {
+                System.out.println(r.getString("train_number"));
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public static void releaseIntoBooking() {
@@ -472,3 +507,8 @@ public class Interactor
         }
     }
 }
+
+
+//  SELECT S.train_number,S.from_station,S.SDT,S.to_station,S.DAT FROM schedules as S WHERE S.from_station = 'CDG' and S.to_station = 'NDLS' and S.source_day=1
+
+// SELECT S1.train_number,S1.from_station,S1.SDT,S1.to_station,S1.DAT,S2.train_number,S2.from_station,S2.SDT,S2.to_station,S2.DAT FROM schedules as S1, schedules as S2 WHERE S1.train_number!=S2.train_number AND S1.from_station = 'CDG' AND S1.to_station = S2.from_station AND S2.to_station = 'NDLS' AND S1.source_day = 1 AND (S2.SDT - S1.DAT <= '04:00:00') AND (S2.SDT-S1.DAT>='00:00:00');
