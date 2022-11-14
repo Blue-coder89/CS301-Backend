@@ -8,7 +8,7 @@ NUM_TRAINS = len(TRAIN_NUMS)
 REQUEST_PER_USER_LIM=200
 
 def addInputFile(userNumber):
-    fileName= open("./InputFiles/pool-1-thread-"+str(userNumber)+"_input.txt","w")
+    fileName= open("./Input/pool-1-thread-"+str(userNumber)+"_input.txt","w")
     totalRows=random.randint(1,REQUEST_PER_USER_LIM)
 
     for i in range(totalRows):

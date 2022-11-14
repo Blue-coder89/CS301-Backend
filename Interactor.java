@@ -2,8 +2,7 @@ import java.io.BufferedReader;
 import java.util.*;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.InputStream;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -289,8 +288,10 @@ public class Interactor
                             statement.execute(sql);
                         }
                     }
-                    System.out.println("Routes added successfully");
+                    
                 }
+                br.close();
+                System.out.println("Routes added successfully");
 
             }
         } catch (Exception e) {
@@ -301,9 +302,9 @@ public class Interactor
     public static void search() 
     {
         System.out.println("Please Enter ta\rting point of Journey: ");
-        String start = sc.next();
+        //String start = sc.next();
         System.out.println("Please Enter end point of Journey: ");
-        String destination = sc.next();
+        //String destination = sc.next();
 
     }
 
@@ -357,6 +358,7 @@ public class Interactor
                     Statement statement = connection.createStatement();
                     statement.execute(sql);
                 }
+                br.close();
                 System.out.println("All the trains released for booking successfully!");
             }
         }

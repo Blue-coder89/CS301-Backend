@@ -100,6 +100,7 @@ class QueryRunner implements Runnable
       try
         {
             //  Reading data from client
+            
             InputStreamReader inputStream = new InputStreamReader(socketConnection
                                                                   .getInputStream()) ;
             BufferedReader bufferedInput = new BufferedReader(inputStream) ;
@@ -137,6 +138,8 @@ class QueryRunner implements Runnable
                     printWriter.close();
                     socketConnection.close();
                     connection.close(); 
+                    //System.out.println("Count: "+cnt);
+
                     return;
                 }
                 String exitCode="old";
@@ -206,7 +209,6 @@ class QueryRunner implements Runnable
                     System.out.println(clientCommand);
                     e.printStackTrace();
                 }
-
                 // responseQuery = "******* Dummy result ******";
 
                 // //----------------------------------------------------------------
@@ -217,7 +219,7 @@ class QueryRunner implements Runnable
                 // //                     + socketConnection.getRemoteSocketAddress().toString() );
                 
             }
-            
+
         }
         catch(IOException e)
         {
@@ -235,7 +237,7 @@ class QueryRunner implements Runnable
 public class ServiceModule 
 {
     static int serverPort = 7005;
-    static int numServerCores = 50 ;
+    static int numServerCores = 100 ;
     //------------ Main----------------------
     public static void main(String[] args) throws IOException 
     {    
@@ -260,6 +262,7 @@ public class ServiceModule
             //  Submit task for execution   
             executorService.submit(runnableTask);   
         }
+
     }
 }
 
