@@ -30,7 +30,22 @@ public class Interactor
         int departureDay;
         String departureTime;
     };
-
+    public static class directSchedules
+    {
+        String sourceStationCode;
+        String destinationStationCode;
+        String sourceStationName;
+        String destinationStationName;
+        String departureTime;
+        String arrivalTime;
+        String trainNumber;
+        String trainName;
+    }
+    public static class singleHopSchedules
+    {
+        directSchedules firstSchedule;
+        directSchedules secondSchedule;
+    }
     public static StringTokenizer bookTickets(
         int numPassengers,
         char choice,
@@ -301,41 +316,159 @@ public class Interactor
 
     public static void search() 
     {
-        System.out.println("Please Enter starting point of Journey: ");
-        String start = sc.next();
-        System.out.println("Please Enter end point of Journey: ");
-        String destination = sc.next();
+        System.out.println("Please Enter station code of origin: ");
+        String start = sc.nextLine();
+        System.out.println("Please Enter station code of your destination: ");
+        String destination = sc.nextLine();
         try
         {
             StringTokenizer resultTokens = new StringTokenizer("");
             // checking direct paths
             String sql = String.format(
-                "SELECT S.train_number,S.from_station,S.SDT,S.to_station,S.DAT FROM schedules as S WHERE S.from_station = '%s' and S.to_station = '%s' and S.source_day=1",start,destination
+                "SELECT S.train_number,S.from_station,S.SDT ,S.to_station,S.DAT FROM schedules as S WHERE S.from_station = '%s' and S.to_station = '%s' and S.source_day=1",start,destination
             );
             Statement statement = connection.createStatement();
-            System.out.println(sql);
             ResultSet r = statement.executeQuery(sql);
-            r.next();
-            resultTokens = new StringTokenizer(r.getString("train_number"),",{}");
-            if (resultTokens.hasMoreTokens()==false)
+            ArrayList<directSchedules> directSchedulesList = new ArrayList<directSchedules>();
+            while (r.next())
             {
-                System.out.println(r.getString("train_number"));
+                directSchedules newSchedule = new directSchedules();
+                newSchedule.sourceStationCode = r.getString("from_station");
+                newSchedule.destinationStationCode = r.getString("to_station");
+                newSchedule.trainNumber = r.getString("train_number");
+                newSchedule.departureTime = r.getString("SDT");
+                newSchedule.arrivalTime = r.getString("DAT");
+                sql = String.format("SELECT * FROM stations WHERE station_code='%s'", newSchedule.sourceStationCode);
+                statement= connection.createStatement();
+                ResultSet tempResults = statement.executeQuery(sql);
+                tempResults.next();
+                newSchedule.sourceStationName = tempResults.getString("station_name");
+
+                sql = String.format("SELECT * FROM stations WHERE station_code='%s'", newSchedule.destinationStationCode);
+                statement= connection.createStatement();
+                tempResults = statement.executeQuery(sql);
+                tempResults.next();
+                newSchedule.destinationStationName = tempResults.getString("station_name");
+
+                sql = String.format("SELECT * FROM trains WHERE number=%s", newSchedule.trainNumber);
+                statement= connection.createStatement();
+                tempResults = statement.executeQuery(sql);
+                tempResults.next();
+                newSchedule.trainName = tempResults.getString("name");
+                directSchedulesList.add(newSchedule);
+            }
+            if (directSchedulesList.isEmpty())
+            {
+                System.out.println("Direct journey not possible in this route");
+            }
+            else
+            {
+                System.out.println("Direct Journey Routes:");
+                for (int i=0;i<directSchedulesList.size();i++)
+                {
+                    directSchedules curSchedule = directSchedulesList.get(i);
+                    System.out.println(String.format("%d. Train Number: %s, %s",i+1,curSchedule.trainNumber,curSchedule.trainName));
+                    System.out.println(String.format("From: %s - %s Departure Time: %s",curSchedule.sourceStationCode,curSchedule.sourceStationName,curSchedule.departureTime));
+                    System.out.println(String.format("  To: %s - %s Arrival Time: %s\n",curSchedule.destinationStationCode,curSchedule.destinationStationName,curSchedule.arrivalTime));                    
+                }
             }
 
 
             // checking single hop paths
             sql = String.format(
-                "SELECT S1.train_number,S1.from_station,S1.SDT,S1.to_station,S1.DAT,S2.train_number,S2.from_station,S2.SDT,S2.to_station,S2.DAT FROM schedules as S1, schedules as S2 WHERE S1.train_number!=S2.train_number AND S1.from_station = '%s' AND S1.to_station = S2.from_station AND S2.to_station = '%s' AND S1.source_day = 1 AND (S2.SDT - S1.DAT <= '04:00:00') AND (S2.SDT-S1.DAT>='00:00:00');",start,destination
+                "SELECT S1.train_number as firstTrainNumber,S1.from_station,S1.SDT as firstDepartureTime,S1.to_station as intermediateStation,S1.DAT as intermediateArrivalTime,S2.train_number as secondTrainNumber,S2.SDT as intermediateDepartureTime,S2.to_station,S2.DAT FROM schedules as S1, schedules as S2 WHERE S1.train_number!=S2.train_number AND S1.from_station = '%s' AND S1.to_station = S2.from_station AND S2.to_station = '%s' AND (S2.SDT - S1.DAT <= '04:00:00') AND (S2.SDT-S1.DAT>'00:00:00');",start,destination
             );
             statement = connection.createStatement();
-            System.out.println(sql);
-            r = statement.executeQuery(sql);
-            r.next();
-            resultTokens = new StringTokenizer(r.getString("train_number"),",{}");
-            if (resultTokens.hasMoreTokens()==false)
+            r=statement.executeQuery(sql);
+            ArrayList <singleHopSchedules> singleHopScheduleList = new ArrayList<singleHopSchedules>();
+            while (r.next())
             {
-                System.out.println(r.getString("train_number"));
+                singleHopSchedules tempSingleHopSchedule = new singleHopSchedules();
+                directSchedules firstSchedule = new directSchedules();
+                directSchedules secondSchedule = new directSchedules();
+                
+                // Details of first train to intermediate station
+                firstSchedule.sourceStationCode = r.getString("from_station");
+                firstSchedule.destinationStationCode = r.getString("intermediatestation");
+                firstSchedule.trainNumber = r.getString("firsttrainnumber");
+                firstSchedule.departureTime = r.getString("firstdeparturetime");
+                firstSchedule.arrivalTime = r.getString("intermediatearrivaltime");
+                sql = String.format("SELECT * FROM stations WHERE station_code='%s'", firstSchedule.sourceStationCode);
+                statement= connection.createStatement();
+                ResultSet tempResults = statement.executeQuery(sql);
+                tempResults.next();
+                firstSchedule.sourceStationName = tempResults.getString("station_name");
+
+                sql = String.format("SELECT * FROM stations WHERE station_code='%s'", firstSchedule.destinationStationCode);
+                statement= connection.createStatement();
+                tempResults = statement.executeQuery(sql);
+                tempResults.next();
+                firstSchedule.destinationStationName = tempResults.getString("station_name");
+
+                sql = String.format("SELECT * FROM trains WHERE number=%s", firstSchedule.trainNumber);
+                statement= connection.createStatement();
+                tempResults = statement.executeQuery(sql);
+                tempResults.next();
+                firstSchedule.trainName = tempResults.getString("name");
+                
+
+                //Details of second train to the destination
+
+                secondSchedule.sourceStationCode = firstSchedule.destinationStationCode;
+                secondSchedule.destinationStationCode = r.getString("to_station");
+                secondSchedule.trainNumber = r.getString("secondtrainnumber");
+                secondSchedule.departureTime = r.getString("intermediatedeparturetime");
+                secondSchedule.arrivalTime = r.getString("dat");
+                sql = String.format("SELECT * FROM stations WHERE station_code='%s'", secondSchedule.sourceStationCode);
+                statement= connection.createStatement();
+                tempResults = statement.executeQuery(sql);
+                tempResults.next();
+                secondSchedule.sourceStationName = tempResults.getString("station_name");
+
+                sql = String.format("SELECT * FROM stations WHERE station_code='%s'", secondSchedule.destinationStationCode);
+                statement= connection.createStatement();
+                tempResults = statement.executeQuery(sql);
+                tempResults.next();
+                secondSchedule.destinationStationName = tempResults.getString("station_name");
+
+                sql = String.format("SELECT * FROM trains WHERE number=%s", secondSchedule.trainNumber);
+                statement= connection.createStatement();
+                tempResults = statement.executeQuery(sql);
+                tempResults.next();
+                secondSchedule.trainName = tempResults.getString("name");
+
+                tempSingleHopSchedule.firstSchedule=firstSchedule;
+                tempSingleHopSchedule.secondSchedule=secondSchedule;
+                singleHopScheduleList.add(tempSingleHopSchedule);
             }
+
+
+            if (singleHopScheduleList.isEmpty())
+            {
+                System.out.println("Journey not possible with a connecting train");
+            }
+            else
+            {
+                System.out.println("Connecting Journey Routes:");
+                for (int i=0;i<singleHopScheduleList.size();i++)
+                {
+                    directSchedules curSchedule = singleHopScheduleList.get(i).firstSchedule;
+                    System.out.println(String.format("%d. Train Number: %s, %s",i+1,curSchedule.trainNumber,curSchedule.trainName));
+                    System.out.println(String.format("From: %s - %s Departure Time: %s",curSchedule.sourceStationCode,curSchedule.sourceStationName,curSchedule.departureTime));
+                    System.out.println(String.format("  To: %s - %s Arrival Time: %s\n",curSchedule.destinationStationCode,curSchedule.destinationStationName,curSchedule.arrivalTime));   
+                    System.out.println("----Wait----\n");
+                    curSchedule = singleHopScheduleList.get(i).secondSchedule;
+                    System.out.println(String.format("Train Number: %s, %s",curSchedule.trainNumber,curSchedule.trainName));
+                    System.out.println(String.format("From: %s - %s Departure Time: %s",curSchedule.sourceStationCode,curSchedule.sourceStationName,curSchedule.departureTime));
+                    System.out.println(String.format("  To: %s - %s Arrival Time: %s\n",curSchedule.destinationStationCode,curSchedule.destinationStationName,curSchedule.arrivalTime));   
+                    
+                    
+
+
+
+                }
+            }
+
         }
         catch (Exception e)
         {
