@@ -1,8 +1,0 @@
-sendQuery.class
-ServiceModule.class
-QueryRunner.class
-client.class
-Interactor.class
-.vscode
-database.properties
-Interactor$station.class
