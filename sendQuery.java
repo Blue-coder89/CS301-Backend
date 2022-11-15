@@ -51,7 +51,7 @@ class sendQuery implements Runnable
                 printWriter.println(query);
             }
 
-            System.out.println("Query sent from " + Thread.currentThread().getName());
+            //System.out.println("Query sent from " + Thread.currentThread().getName());
 
             // Get query responses from the input end of the socket of client
             String result;

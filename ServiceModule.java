@@ -237,7 +237,7 @@ class QueryRunner implements Runnable
 public class ServiceModule 
 {
     static int serverPort = 7005;
-    static int numServerCores = 100 ;
+    static int numServerCores = 155 ;
     //------------ Main----------------------
     public static void main(String[] args) throws IOException 
     {    

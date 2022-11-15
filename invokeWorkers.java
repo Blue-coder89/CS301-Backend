@@ -16,11 +16,11 @@ public class invokeWorkers implements Runnable
     
     public void run()
     {
-        // for(int i=0; i < secondLevelThreads ; i++)
-        // {
-        //     Runnable runnableTask = new sendQuery()  ;    //  Pass arg, if any to constructor sendQuery(arg)
-        //     executorService.submit(runnableTask) ;
-        // }
+        for(int i=0; i < secondLevelThreads ; i++)
+        {
+            Runnable runnableTask = new sendQuery()  ;    //  Pass arg, if any to constructor sendQuery(arg)
+            executorService.submit(runnableTask) ;
+        }
 
         sendQuery s = new sendQuery();      // Send queries from current thread
         s.run();
