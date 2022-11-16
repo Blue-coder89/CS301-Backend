@@ -24,7 +24,15 @@
 
 
 ## File format
-### for files in input folder
-- <Number of passengers> <passenger names seperated by comma> <train Number> <date> <coach type>
+### files in input folder
+- each line of the file should follow format mentioned below:
+  - "Number of passengers" "passenger names seperated by comma" "train number" "date" "coach type"
+
+### files in data folder
+- routes.txt should follow the format mentioned below:
+  - line1 : "train number"
+  - line2 : "number of stations" (say n)
+  - line3 to line(3 + n): "stationCode"  "arrival day" "arrival time" "departure day" "departure time"
+
 
 
