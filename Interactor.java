@@ -65,7 +65,7 @@ public class Interactor
         try
         {
             Statement statement = connection.createStatement();
-            System.out.println(sql);
+            //System.out.println(sql);
             ResultSet r = statement.executeQuery(sql);
             r.next();
             resultTokens = new StringTokenizer(r.getString("book_tickets"),",{}");
@@ -557,7 +557,7 @@ public class Interactor
                 String name = sc.nextLine();
                 passengerNames.add(name);
             }
-        String commaSeperatedNames = passengerNames.toString().replace("[", "'").replace("]", "'").replace(" ","'").replace(",","',");
+        String commaSeperatedNames = passengerNames.toString().replace("[", "'").replace("]", "'").replace(", ",", '").replace(",","',");
         StringTokenizer resultTokens = bookTickets(numPassengers,choice.charAt(0), train_no, date, firstTry, commaSeperatedNames);
         String exitCode = resultTokens.nextToken();
         switch (exitCode) {

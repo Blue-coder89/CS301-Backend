@@ -162,7 +162,7 @@ class QueryRunner implements Runnable
                     String date = tokenizer.nextToken();
                     String choice=tokenizer.nextToken();
                     String firstTry= "true";
-                    String commaSepNames = passengerNames.toString().replace("[", "'").replace("]", "'").replace(" ","'").replace(",","',");
+                    String commaSepNames = passengerNames.toString().replace("[", "'").replace("]", "'").replace(", ",", '").replace(",","',");
                     StringTokenizer resultTokens = bookTickets(connection, numPassengers, choice.charAt(0), train_no, date, firstTry, commaSepNames);
 
                     exitCode = resultTokens.nextToken();
@@ -237,7 +237,7 @@ class QueryRunner implements Runnable
 public class ServiceModule 
 {
     static int serverPort = 7005;
-    static int numServerCores = 155 ;
+    static int numServerCores = 90 ;
     //------------ Main----------------------
     public static void main(String[] args) throws IOException 
     {    
