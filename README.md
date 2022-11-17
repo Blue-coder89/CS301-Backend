@@ -2,10 +2,17 @@
 
 ## Opening postgres and loading the database
 - Load the Database from [ticketreservation repository](https://github.com/skhan-org/TicketReservationSystem).
-- Open VSCODE.
 - Clone the repository.
 - Type ``` sudo -s -u postgres ``` in terminal.
-- Type ``` psql railways ``` in terminal.
+- Type ``` psql ``` in terminal.
+- Load the database by the command ``` \i setup.sql ```
+- Create a file **database.properties** in the directory(Containing ServiceModule.java) with the following contents. Put the user, password and db_url of your own database.
+```
+JDBC_DRIVER=org.postgresql.Driver
+USER=postgres
+PASS=1234
+DB_URL=jdbc:postgresql://localhost:5432/railways
+```
 
 ## Starting the backend part
 - Compile the Following files using javac
@@ -37,9 +44,10 @@
 - #### **_Train-Schedules_**
 
        <Train-No> <date of journey> <no:of Ac-coaches> <no:of sleeper-coaches>
+       # (At the end)
 - #### *Station*
 
-       <Station-Name>: <Station-Code>
+       <Station-Name>:<Station-Code>
        
 - #### *Routes*
 
