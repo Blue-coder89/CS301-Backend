@@ -48,4 +48,17 @@
         // For each station in order as seen by train, enter following details,
             <Station-Code> <Day-of-arrival> <Time-of-arrival> <Day-of-Departure> <Time-of-Departure>
 
+## Using Interactor
+- **_How to Run?_**
+```
+    Javac Interactor.java
+    Java Interactor
+```
+- **_Operations:_**
+ - _Search:_
+    [![](https://mermaid.ink/img/eyJjb2RlIjoiZmxvd2NoYXJ0IExSXG4gICAgWihQcmVzcyA3KS0tPiB8U2VhcmNoIEZ1bmN0aW9ufCBZKEVudGVyIE5hbWUgb2YgU291cmNlIFN0YXRpb24pIC0tPiB8RWc6IENER3wgVyhFbnRlciBOYW1lIG9mIERlc3RpbmF0aW9uIFN0YXRpb24pLS0-IHxFZzogTkRMU3wgWChPdXRwdXQgYWxsIHBhdGhzIGZyb20gU291cmNlIHRvIERlc3RpbmF0aW9uKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiZmxvd2NoYXJ0IExSXG4gICAgWihQcmVzcyA3KS0tPiB8U2VhcmNoIEZ1bmN0aW9ufCBZKEVudGVyIE5hbWUgb2YgU291cmNlIFN0YXRpb24pIC0tPiB8RWc6IENER3wgVyhFbnRlciBOYW1lIG9mIERlc3RpbmF0aW9uIFN0YXRpb24pLS0-IHxFZzogTkRMU3wgWChPdXRwdXQgYWxsIHBhdGhzIGZyb20gU291cmNlIHRvIERlc3RpbmF0aW9uKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
 
+ - _Add train:_
+ 
+    [![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVEJcbiAgICBBKFByZXNzIDEpIC0tPiBCKEVudGVyIFRyYWluczogTWFudWFsbHkgLyB2aWEgRmlsZSlcbiAgICBCIC0tPnxQcmVzcyAxfCBEKEVudGVyIFRyYWluIE51bWJlcilcbiAgICBCIC0tPnxQcmVzcyAyfCBDKFRyYWlucyB3aWxsIGdldCBsb2FkZWQgaW50byBEYXRhYmFzZSlcbiAgICBEIC0tPkUoRW50ZXIgVHJhaW4gTmFtZSkgXG5cbiAgIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiZ3JhcGggVEJcbiAgICBBKFByZXNzIDEpIC0tPiBCKEVudGVyIFRyYWluczogTWFudWFsbHkgLyB2aWEgRmlsZSlcbiAgICBCIC0tPnxQcmVzcyAxfCBEKEVudGVyIFRyYWluIE51bWJlcilcbiAgICBCIC0tPnxQcmVzcyAyfCBDKFRyYWlucyB3aWxsIGdldCBsb2FkZWQgaW50byBEYXRhYmFzZSlcbiAgICBEIC0tPkUoRW50ZXIgVHJhaW4gTmFtZSkgXG5cbiAgIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
+    
