@@ -24,15 +24,28 @@
 
 
 ## File format
-### files in input folder
+
+### _Files in input folder_
 - each line of the file should follow format mentioned below:
   - "Number of passengers" "passenger names seperated by comma" "train number" "date" "coach type"
 
-### files in data folder
-- routes.txt should follow the format mentioned below:
-  - line1 : "train number"
-  - line2 : "number of stations" (say n)
-  - line3 to line(3 + n): "stationCode"  "arrival day" "arrival time" "departure day" "departure time"
+### _Files in data folder_
+- #### **_Train_**
+       line 1: <Train-No>
+       line 2: <Train-Name>
+    
+- #### **_Train-Schedules_**
 
+       <Train-No> <date of journey> <no:of Ac-coaches> <no:of sleeper-coaches>
+- #### *Station*
+
+       <Station-Name>: <Station-Code>
+       
+- #### *Routes*
+
+        line 1: <Train-Number>
+        line 2: <Number-of-Stations-in-Path>
+        // For each station in order as seen by train, enter following details,
+            <Station-Code> <Day-of-arrival> <Time-of-arrival> <Day-of-Departure> <Time-of-Departure>
 
 
